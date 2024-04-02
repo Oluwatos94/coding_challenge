@@ -63,21 +63,43 @@ function count_words($file_path) {
     echo "word count: $word_count" . PHP_EOL;
 }
 
-// check if correct number of arguments are passed
-if ($argc != 3 || !in_array($argv[1], ['-c', '-l', '-w'])) {
-    die("Usage: php wc.php -c|-l|-w filename\n");
+function number_of_characters($file_path) {
+    //  get the content of the file
+    $contents = file_get_contents($file_path, 'r');
+
+    // count the number of characters
+    $character_count = mb_strlen($contents, "UTF-8");
+
+    // print the character count
+    echo "character count: $character_count\n";
 }
 
-// get the fiel path from the command line.
-$file_path = $argv[2];
+// Check if correct number of arguments are passed and handle default behavior
+if ($argc == 2 || ($argc == 3 && in_array($argv[1], ['-c', '-l', '-w', '-m']))) {
+    $file_path = $argc == 2 ? $argv[1] : $argv[2];
+    
+    if (!file_exists($file_path)) {
+        die("Error: File does not exist\n");
+    }
 
-// check the optional and call the respective function
-if (!file_exists($file_path)) {
-    echo "Error: file does not exist\n";
-} else if ($argv[1] === '-l') {
-    count_lines($file_path);
-} else if ($argv[1] === '-c') {
-    count_bytes($file_path);
-} else if ($argv[1] === '-w') {
-    count_words($file_path);
+    // check the option and call the respective function
+    if ($argc == 3) {
+        if ($argv[1] === '-l') {
+            count_lines($file_path);
+        } else if ($argv[1] === '-c') {
+            count_bytes($file_path);
+        } else if ($argv[1] === '-w') {
+            count_words($file_path);
+        } else if ($argv[1] === '-m') {
+            number_of_characters($file_path);
+        }
+    } else {
+        // no option provided, perform default behavior
+        count_bytes($file_path);
+        count_lines($file_path);
+        count_words($file_path);
+        number_of_characters($file_path);
+    }
+} else {
+    die("Usage: php wc.php [-c|-l|-w|-m] filename\n");
 }
