@@ -74,8 +74,70 @@ function number_of_characters($file_path) {
     echo "character count: $character_count\n";
 }
 
+function count_bytes_stdin() {
+    // read the input from standard input
+    $input = stream_get_contents(STDIN);
+
+    // count the number of bytes
+    $bytes_count = strlen($input);
+
+    echo "bytes count: $bytes_count" . PHP_EOL;
+
+}
+
+function count_lines_stdin() {
+    // read the input from standard input
+    $line_count = 0;
+
+    while(!feof(STDIN)) {
+        $line = fgets(STDIN);
+        if ($line !== false) {
+            $line_count++;
+        }
+    }
+
+    echo "line count: $line_count" . PHP_EOL;
+}
+
+function count_words_stdin() {
+    $input = stream_get_contents(STDIN);
+
+    $word_count = str_word_count($input);
+
+    echo "word count: $word_count" . PHP_EOL;
+}
+
+function number_of_characters_stdin() {
+    $input = stream_get_contents(STDIN);
+
+    $character_count = mb_strlen($input);
+
+    echo "character count: $character_count" . PHP_EOL;
+}
+
+// check if the input is coming from standard input
+if ($argc == 1 || ($argc == 2 && in_array($argv[1], ['-c', '-l', '-w', '-m']))) {
+    // check the option and call the respective function
+    if ($argc == 2) {
+        if ($argv[1] === '-l') {
+            count_lines_stdin();
+        } else if ($argv[1] === '-c') {
+            count_bytes_stdin();
+        } else if ($argv[1] === '-w') {
+            count_words_stdin();
+        } else if ($argv[1] === '-m') {
+            number_of_characters_stdin();
+        }
+    } else {
+        // no option provided, perform default behavior
+        count_bytes_stdin();
+        count_lines_stdin();
+        count_words_stdin();
+        number_of_characters_stdin();
+    }
+
 // Check if correct number of arguments are passed and handle default behavior
-if ($argc == 2 || ($argc == 3 && in_array($argv[1], ['-c', '-l', '-w', '-m']))) {
+} else if ($argc == 2 || ($argc == 3 && in_array($argv[1], ['-c', '-l', '-w', '-m']))) {
     $file_path = $argc == 2 ? $argv[1] : $argv[2];
     
     if (!file_exists($file_path)) {
