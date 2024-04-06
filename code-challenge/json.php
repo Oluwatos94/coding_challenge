@@ -1,6 +1,6 @@
 <?php
 
-class JSONLexe
+class JSONLexer
 {
     private $input;
     private $position;
@@ -36,21 +36,23 @@ class JSONLexe
     }
 }
 
-class JSONPaser
+class JSONParser
 {
     private $lexer;
     private $currentToken;
 
     public function __construct($lexer) {
         $this->lexer = $lexer;
-        $this->currentToken = $this->lexer->generateNextToken;
+        $this->currentToken = $this->lexer->getNextToken();
     }
 
     public function parse() {
         if ($this->currentToken['type'] === 'L_BRACE') {
             $this->match('L_BRACE');
             $this->match('R_BRACE');
-            $this->match('EOL');
+            if ($this->currentToken['type'] !== 'EOF') {
+                $this->error("Unexpected token {$this->currentToken['value']}");
+            }
 
             return true;
         } else {
@@ -60,9 +62,9 @@ class JSONPaser
 
     private function match($expectedType) {
         if ($this->currentToken['type'] === $expectedType) {
-            $this->currentToken = $this->lexer->generatedNextToken();
+            $this->currentToken = $this->lexer->getNextToken();
         } else {
-            $this->error("Eexpected {$expectedType}, but got {$this->currentToken['type']}");
+            $this->error("Unexpected token {$this->currentToken['value']}");
         }
     }
 
@@ -70,4 +72,26 @@ class JSONPaser
         fwrite(STDERR, "Error: $message\n");
         exit(1);
     }
+}
+
+// Read input from command line argument
+
+if ($argc != 2 ) {
+    die("usage: php json.php <input>\n");
+}
+
+$input = $argv[1];
+
+//create lexer and parser objects
+$lexer = new JSONLexer($input);
+$parser = new JSONParser($lexer);
+
+// parse the input and check validibility
+
+if ($parser->parse()) {
+    echo "valid JSON object\n";
+    exit(0);
+} else {
+    echo "invalid JSON object\n";
+    exit(1);
 }
