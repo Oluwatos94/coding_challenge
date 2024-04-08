@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Run tests for step 1
+# Run tests for step 2
 
 # Function to run a test case
 run_test() {
     echo "Testing file: $1"
-    php json.php "$(cat "$1")"
+    php jsonExtend.php "$(cat "$1")"
     if [ $? -eq 0 ]; then
         echo "Test PASSED"
     else
@@ -15,9 +15,11 @@ run_test() {
 }
 
 # Run tests
-echo "Starting tests for Step 1"
+echo "Starting tests for Step 2"
 
-run_test "tests/step1/valid.json"
-run_test "tests/step1/invalid.json"
+run_test "tests/step2/valid.json"
+run_test "tests/step2/valid2.json"
+run_test "tests/step2/invalid.json"
+run_test "tests/step2/invalid2.json"
 
 echo "All tests completed"
