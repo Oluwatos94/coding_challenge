@@ -15,11 +15,13 @@ run_test() {
 }
 
 # Run tests
-echo "Starting tests for Step 2"
+echo "Starting tests for Step 2 and 3"
 
 run_test "tests/step2/valid.json"
 run_test "tests/step2/valid2.json"
 run_test "tests/step2/invalid.json"
 run_test "tests/step2/invalid2.json"
+run_test "tests/step3/valid.json"
+run_test "tests/step3/invalid.json"
 
 echo "All tests completed"
